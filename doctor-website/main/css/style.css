@@ -1587,3 +1587,128 @@ textarea.invalid {
   margin: 0 !important;
   padding: 0 !important;
 }
+
+/* =========================
+   Simple Booking Section
+   ========================= */
+
+.booking-simple-card {
+  position: relative;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 55px 50px;
+  text-align: center;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(225, 245, 255, 0.82)
+  );
+  border: 1px solid rgba(53, 163, 217, 0.16);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-medium);
+  overflow: hidden;
+}
+
+.booking-simple-card::before {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  top: -150px;
+  left: -120px;
+  background: rgba(53, 163, 217, 0.12);
+  border-radius: 50%;
+  filter: blur(10px);
+}
+
+.booking-simple-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+}
+
+.booking-simple-content h2 {
+  margin-top: 18px;
+  margin-bottom: 12px;
+}
+
+.booking-simple-content > p {
+  max-width: 600px;
+  font-size: 1rem;
+  color: var(--neutral-700);
+}
+
+.booking-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin: 30px 0 24px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(53, 163, 217, 0.15);
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(18, 50, 93, 0.08);
+}
+
+.phone-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--gradient-primary);
+  color: var(--white);
+  font-size: 1.35rem;
+}
+
+.booking-phone div {
+  display: grid;
+  text-align: right;
+  gap: 2px;
+}
+
+.booking-phone span:not(.phone-icon) {
+  color: var(--neutral-500);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.booking-phone strong {
+  color: var(--primary-900);
+  font-size: 1.25rem;
+  direction: ltr;
+}
+
+.booking-call-btn {
+  min-width: 240px;
+  font-size: 1rem;
+  padding: 1rem 1.6rem;
+}
+
+.booking-note {
+  margin-top: 14px;
+  color: var(--neutral-500);
+  font-size: 0.82rem;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .booking-simple-card {
+    padding: 40px 22px;
+  }
+
+  .booking-simple-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .booking-phone {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .booking-call-btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
