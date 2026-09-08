@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Ahmed Mohamed | Internal Medicine</title>
+  <meta
+    name="description"
+    content="Professional profile and appointment booking for Dr. Ahmed Mohamed, Consultant Internal Medicine."
+  />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#home" class="brand">Dr. Ahmed Mohamed</a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="primaryNav" class="primary-nav" aria-label="Primary">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#book">Book Appointment</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section id="home" class="hero">
+      <div class="container hero-inner">
+        <div class="hero-photo">
+          <img id="heroPhoto" src="/assets/placeholder.jpg" alt="" width="220" height="220" />
+        </div>
+        <div class="hero-content">
+          <p class="badge">Sample / demo profile</p>
+          <h1 id="heroName">Loading doctor profile…</h1>
+          <p class="hero-title" id="heroTitle"></p>
+          <p class="hero-bio" id="heroBio"></p>
+          <div class="hero-rating" id="heroRating" aria-live="polite"></div>
+          <div class="hero-cta">
+            <a href="#book" class="btn btn-primary">Book Appointment</a>
+            <a href="#reviews" class="btn btn-outline">Read Reviews</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT / PROFILE -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2>About &amp; Expertise</h2>
+        <div class="about-grid">
+          <div class="card">
+            <h3>Biography</h3>
+            <p id="aboutBio">Loading…</p>
+          </div>
+          <div class="card">
+            <h3>Skills &amp; Expertise</h3>
+            <ul id="skillsList" class="skills-list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section section-alt">
+      <div class="container">
+        <h2>Experience</h2>
+        <p id="experienceText">Loading…</p>
+      </div>
+    </section>
+
+    <!-- RATING SUMMARY -->
+    <section id="rating-summary" class="section">
+      <div class="container">
+        <h2>Patient Rating Summary</h2>
+        <div id="ratingSummary" class="rating-summary" aria-live="polite">Loading…</div>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section id="reviews" class="section section-alt">
+      <div class="container">
+        <h2>Patient Reviews</h2>
+        <p class="muted">Reviews marked "(demo)" are sample data for this MVP.</p>
+        <div id="reviewsList" class="reviews-list" aria-live="polite">
+          <p>Loading reviews…</p>
+        </div>
+
+        <h3>Leave a Review</h3>
+        <form id="reviewForm" class="form" novalidate>
+          <div class="form-row">
+            <label for="reviewName">Your name</label>
+            <input type="text" id="reviewName" name="patientName" required maxlength="100" autocomplete="name" />
+            <p class="field-error" id="reviewNameError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="rating">Rating</label>
+            <select id="rating" name="rating" required>
+              <option value="">Choose rating</option>
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Very Good</option>
+              <option value="3">3 - Good</option>
+              <option value="2">2 - Fair</option>
+              <option value="1">1 - Poor</option>
+            </select>
+            <p class="field-error" id="ratingError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="comment">Comment</label>
+            <textarea id="comment" name="comment" required maxlength="1000" rows="4"></textarea>
+            <p class="field-error" id="commentError" role="alert"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit Review</button>
+          <p class="form-status" id="reviewStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- APPOINTMENT BOOKING -->
+    <section id="book" class="section">
+      <div class="container">
+        <h2>Book an Appointment</h2>
+        <form id="bookingForm" class="form" novalidate>
+          <div class="form-row">
+            <label for="apptDate">Date</label>
+            <input type="date" id="apptDate" name="date" required />
+            <p class="field-error" id="dateError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="apptTime">Available times</label>
+            <select id="apptTime" name="time" required disabled>
+              <option value="">Choose a date first</option>
+            </select>
+            <p class="field-error" id="timeError" role="alert"></p>
+            <p class="field-hint" id="availabilityStatus" aria-live="polite"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="patientName">Full name</label>
+            <input type="text" id="patientName" name="patientName" required maxlength="100" autocomplete="name" />
+            <p class="field-error" id="patientNameError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="patientPhone">Phone</label>
+            <input type="tel" id="patientPhone" name="patientPhone" required maxlength="30" autocomplete="tel" />
+            <p class="field-error" id="patientPhoneError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="patientEmail">Email (optional)</label>
+            <input type="email" id="patientEmail" name="patientEmail" maxlength="254" autocomplete="email" />
+            <p class="field-error" id="patientEmailError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="notes">Reason / notes (optional)</label>
+            <textarea id="notes" name="notes" maxlength="1000" rows="3"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="bookingSubmit">Request Appointment</button>
+          <p class="form-status" id="bookingStatus" role="status" aria-live="polite"></p>
+        </form>
+
+        <div id="bookingConfirmation" class="confirmation-card hidden" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- POST-VISIT SURVEY -->
+    <section id="survey" class="section section-alt">
+      <div class="container">
+        <h2>Post-Visit Survey</h2>
+        <p class="muted">Already had your visit? Let us know how it went.</p>
+        <form id="surveyForm" class="form" novalidate>
+          <div class="form-row">
+            <label for="surveyApptId">Appointment ID</label>
+            <input type="number" id="surveyApptId" name="appointmentId" required min="1" />
+            <p class="field-error" id="surveyApptIdError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="surveyPatientName">Your name</label>
+            <input type="text" id="surveyPatientName" name="patientName" required maxlength="100" />
+            <p class="field-error" id="surveyPatientNameError" role="alert"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="satisfaction">Overall satisfaction (1–5)</label>
+            <select id="satisfaction" name="satisfaction" required>
+              <option value="">Choose</option>
+              <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="communication">Doctor communication (1–5)</label>
+            <select id="communication" name="communication" required>
+              <option value="">Choose</option>
+              <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="waitingTime">Waiting time (1–5)</label>
+            <select id="waitingTime" name="waitingTime" required>
+              <option value="">Choose</option>
+              <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option>
+            </select>
+          </div>
+
+          <fieldset class="form-row">
+            <legend>Would you recommend this doctor?</legend>
+            <label class="inline-label"><input type="radio" name="wouldRecommend" value="true" required /> Yes</label>
+            <label class="inline-label"><input type="radio" name="wouldRecommend" value="false" /> No</label>
+          </fieldset>
+
+          <div class="form-row">
+            <label for="surveyComments">Additional comments (optional)</label>
+            <textarea id="surveyComments" name="comments" maxlength="1000" rows="3"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit Survey</button>
+          <p class="form-status" id="surveyStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>Contact</h2>
+        <p>For urgent medical concerns, please contact local emergency services directly.</p>
+        <address>
+          Clinic hours: Saturday–Thursday, 09:00–17:00 (closed Friday, break 13:00–14:00).<br />
+          This is a demo MVP — no real contact details are provided.
+        </address>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Dr. Ahmed Mohamed — Demo project. Not a real medical practice.</p>
+    </div>
+  </footer>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
