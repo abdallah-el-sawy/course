@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShieldOps SECaaS — Demo Prototype</title>
+<style>
+:root{--navy:#0b1b3a;--bg:#f1f4f9;--card:#fff;--tx:#14213d;--mu:#64748b;--bd:#e2e8f0;--pr:#2563eb;--cy:#06b6d4;--crit:#dc2626;--high:#ea580c;--med:#d97706;--low:#16a34a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+button,input,select,textarea{font:inherit}a{color:var(--pr)}
+.app{display:flex;min-height:100vh}.side{width:230px;background:var(--navy);color:#cbd5e1;padding:18px 12px;position:fixed;inset:0 auto 0 0;z-index:30;transition:.2s}
+.logo{color:#fff;font-weight:700;font-size:18px;padding:4px 10px 18px}.logo b{color:var(--cy)}
+.nav{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;color:inherit;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:left;margin-bottom:2px}
+.nav:hover{background:#16295200;background:#162952}.nav.on{background:var(--pr);color:#fff}
+.main{margin-left:230px;flex:1;min-width:0}.top{display:flex;align-items:center;gap:12px;padding:14px 24px;background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:20}
+.top h2{margin:0;font-size:17px;flex:1}.burger{display:none}.content{padding:24px;max-width:1200px}
+.card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 1px 3px #0f172a14;border:1px solid var(--bd)}
+.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.mb{margin-bottom:16px}h3{margin:0 0 12px;font-size:15px}.mu{color:var(--mu)}.big{font-size:28px;font-weight:700}
+.btn{background:var(--pr);color:#fff;border:0;padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:600}.btn:hover{filter:brightness(1.1)}
+.btn.o{background:#fff;color:var(--tx);border:1px solid var(--bd)}.btn.sm{padding:5px 10px;font-size:13px}
+.badge{padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;color:#fff;display:inline-block}
+.Critical{background:var(--crit)}.High{background:var(--high)}.Medium{background:var(--med)}.Low{background:var(--low)}
+.st{background:#e0e7ff;color:#3730a3}.st.Resolved,.st.Secure{background:#dcfce7;color:#166534}.st.Open,.st.At\ Risk{background:#fee2e2;color:#991b1b}.st.In\ Progress,.st.Needs\ Attention{background:#fef3c7;color:#92400e}
+.badge.st{color:inherit}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--bd)}th{color:var(--mu);font-weight:600;font-size:12px;text-transform:uppercase}
+.tw{overflow-x:auto}input,select,textarea{padding:9px 11px;border:1px solid var(--bd);border-radius:8px;background:#fff;width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>input,.row>select{width:auto;flex:1;min-width:140px}
+.bar{height:8px;background:var(--bd);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pr),var(--cy));transition:width .3s}
+.modal{position:fixed;inset:0;background:#0b1b3a99;display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}.modal .card{width:100%;max-width:560px;max-height:90vh;overflow:auto}
+.demo{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:8px 14px;border-radius:8px;font-size:13px;margin-bottom:16px}
+.chat{height:380px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:6px}.m{max-width:80%;padding:10px 14px;border-radius:12px;white-space:pre-wrap;line-height:1.5}
+.m.u{align-self:flex-end;background:var(--pr);color:#fff}.m.a{background:#eef2ff}.chip{background:#eef2ff;border:0;color:var(--pr);padding:6px 12px;border-radius:99px;cursor:pointer}
+.login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}.hero{background:linear-gradient(135deg,var(--navy),#0e3a6b);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.form{display:flex;flex-direction:column;justify-content:center;padding:48px;max-width:440px;margin:auto;width:100%;gap:12px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:12px 18px;border-radius:10px;z-index:99}
+.bell{position:relative}.dot{position:absolute;top:-4px;right:-4px;background:var(--crit);color:#fff;border-radius:99px;font-size:10px;padding:1px 5px}
+.pop{position:absolute;right:24px;top:56px;width:300px;z-index:40}.tog{display:flex;justify-content:space-between;padding:8px 0}
+@media(max-width:860px){.side{transform:translateX(-100%)}.side.open{transform:none}.main{margin-left:0}.burger{display:block}.login{grid-template-columns:1fr}.hero{padding:28px}.content{padding:14px}}
+</style></head><body><div id="root"></div>
+<script>
+const $=s=>document.querySelector(s);
+const SEED={assets:[
+{id:1,name:"shop.acmeretail.demo",type:"Website",ver:true,scan:"2026-10-12",status:"At Risk"},
+{id:2,name:"portal.northwind-clinic.demo",type:"Web App",ver:true,scan:"2026-10-10",status:"Needs Attention"},
+{id:3,name:"blog.brightdesign.demo",type:"Website",ver:true,scan:"2026-10-08",status:"Secure"},
+{id:4,name:"api.acmeretail.demo",type:"Domain",ver:false,scan:"Never",status:"Needs Attention"}],
+vulns:[
+{id:1,t:"Exposed environment file reference",sev:"Critical",asset:"shop.acmeretail.demo",date:"2026-10-12",status:"Open",desc:"A configuration file (.env) appears to be publicly reachable.",why:"Config files often contain database passwords and API keys.",ev:"[Simulated] GET /.env → 200 OK (412 bytes)",imp:"Attackers could access customer data and payment integrations.",fix:["Remove the file from the web root","Block dotfiles in the web server config","Rotate all exposed credentials"]},
+{id:2,t:"Missing security headers (HSTS, CSP)",sev:"High",asset:"shop.acmeretail.demo",date:"2026-10-12",status:"In Progress",desc:"Responses lack Strict-Transport-Security and Content-Security-Policy headers.",why:"Headers tell browsers to block downgrade and script-injection attacks.",ev:"[Simulated] Missing: Strict-Transport-Security, Content-Security-Policy, X-Frame-Options",imp:"Higher risk of session hijacking, clickjacking and XSS.",fix:["Add Strict-Transport-Security: max-age=31536000","Define a Content-Security-Policy","Add X-Frame-Options: DENY"]},
+{id:3,t:"Legacy TLS 1.0 enabled",sev:"High",asset:"portal.northwind-clinic.demo",date:"2026-10-10",status:"Open",desc:"The server still accepts outdated TLS 1.0 connections.",why:"TLS 1.0 has known weaknesses and fails compliance checks.",ev:"[Simulated] Protocols offered: TLS 1.0, 1.2, 1.3",imp:"Traffic could be intercepted; compliance risk for health data.",fix:["Disable TLS 1.0 and 1.1","Allow only TLS 1.2+"]},
+{id:4,t:"Outdated jQuery 1.12 detected",sev:"Medium",asset:"blog.brightdesign.demo",date:"2026-10-08",status:"Open",desc:"The site loads an old JavaScript library version.",why:"Old libraries often carry publicly known flaws.",ev:"[Simulated] /js/jquery-1.12.4.min.js",imp:"Possible cross-site scripting exposure.",fix:["Upgrade to jQuery 3.x","Test pages after the upgrade"]},
+{id:5,t:"Weak cookie security flags",sev:"Medium",asset:"portal.northwind-clinic.demo",date:"2026-10-10",status:"Open",desc:"Session cookie lacks Secure and HttpOnly flags.",why:"Flags stop scripts and insecure channels from reading cookies.",ev:"[Simulated] Set-Cookie: sid=…; Path=/",imp:"Stolen sessions could let attackers impersonate users.",fix:["Add Secure and HttpOnly","Set SameSite=Lax or Strict"]},
+{id:6,t:"Directory listing enabled",sev:"Medium",asset:"shop.acmeretail.demo",date:"2026-10-12",status:"Resolved",desc:"The /uploads/ folder displays its file list.",why:"It reveals files that were never meant to be public.",ev:"[Simulated] GET /uploads/ → Index of /uploads",imp:"Information leakage helps attackers plan attacks.",fix:["Disable autoindex","Add an index page"]},
+{id:7,t:"Server version disclosure",sev:"Low",asset:"blog.brightdesign.demo",date:"2026-10-08",status:"Open",desc:"The Server header reveals exact software versions.",why:"It helps attackers pick matching exploits.",ev:"[Simulated] Server: Apache/2.4.29",imp:"Minor, but assists reconnaissance.",fix:["Set ServerTokens Prod"]},
+{id:8,t:"Missing SPF/DMARC email records",sev:"Low",asset:"api.acmeretail.demo",date:"2026-10-09",status:"Open",desc:"No email authentication records were found.",why:"Without them, attackers can spoof your domain in phishing emails.",ev:"[Simulated] TXT lookup: no v=spf1 / v=DMARC1",imp:"Brand and customer trust damage.",fix:["Publish an SPF record","Publish a DMARC policy"]}],
+scans:[["shop.acmeretail.demo","Basic Website Security Check","2026-10-12"],["portal.northwind-clinic.demo","Configuration Check","2026-10-10"],["blog.brightdesign.demo","Basic Website Security Check","2026-10-08"]],
+notifs:["Critical issue found on shop.acmeretail.demo","Scan completed for portal.northwind-clinic.demo","api.acmeretail.demo is not verified yet"]};
+let S;try{S=JSON.parse(localStorage.getItem("secaas")||"null")}catch(e){}
+S=S||JSON.parse(JSON.stringify(SEED));S.page=S.page||"Overview";S.nf=null;
+const save=()=>{try{localStorage.setItem("secaas",JSON.stringify(S))}catch(e){}};
+const W=["Overview","My Assets","Security Scans","Vulnerabilities","AI Security Assistant","Reports","Settings"];
+const IC={Overview:"▦","My Assets":"◎","Security Scans":"⟳",Vulnerabilities:"⚠","AI Security Assistant":"✦",Reports:"▤",Settings:"⚙"};
+const sevs=["Critical","High","Medium","Low"],cnt=s=>S.vulns.filter(v=>v.sev==s&&v.status!="Resolved").length;
+const score=()=>Math.max(20,100-cnt("Critical")*15-cnt("High")*7-cnt("Medium")*3-cnt("Low"));
+const toast=m=>{const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),2200)};
+const bd=(c,t)=>`<span class="badge ${c}">${t}</span>`,sb=t=>`<span class="badge st ${t}">${t}</span>`;
+const go=p=>{S.page=p;S.nf=null;S.side=0;draw()};
+let chat=[{r:"a",t:"Hi! I'm the demo assistant. I answer from the simulated findings in this prototype (no live AI model is connected). Pick a suggested question below."}],scanState=null,filt={q:"",sev:"",st:""},afilt="",sel=null,modal="",authed=false;
+
+function trend(){const d=[62,65,64,70,72,75,78],w=520,h=170,p=24;const pts=d.map((v,i)=>[p+i*(w-2*p)/6,h-p-(v-55)*(h-2*p)/30]);
+return`<svg viewBox="0 0 ${w} ${h}" width="100%"><polyline fill="none" stroke="#2563eb" stroke-width="3" points="${pts.map(x=>x.join(",")).join(" ")}"/>${pts.map((x,i)=>`<circle cx="${x[0]}" cy="${x[1]}" r="4" fill="#06b6d4"/><text x="${x[0]}" y="${h-4}" font-size="10" text-anchor="middle" fill="#64748b">${["Apr","May","Jun","Jul","Aug","Sep","Oct"][i]}</text><text x="${x[0]}" y="${x[1]-9}" font-size="10" text-anchor="middle" fill="#14213d">${d[i]}</text>`).join("")}</svg>`}
+function ring(v){const c=2*Math.PI*52;return`<svg viewBox="0 0 130 130" width="130"><circle cx="65" cy="65" r="52" fill="none" stroke="#e2e8f0" stroke-width="12"/><circle cx="65" cy="65" r="52" fill="none" stroke="${v>=75?"#16a34a":v>=50?"#d97706":"#dc2626"}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c*v/100} ${c}" transform="rotate(-90 65 65)"/><text x="65" y="72" text-anchor="middle" font-size="28" font-weight="700" fill="#14213d">${v}</text></svg>`}
+const open=()=>S.vulns.filter(v=>v.status!="Resolved");
+const demo=`<div class="demo">⚠ Demonstration data — all assets, findings and scores are simulated. No real scans are performed.</div>`;
+
+const P={
+Overview:()=>`${demo}<div class="grid g4 mb"><div class="card" style="text-align:center"><div class="mu">Security Score</div>${ring(score())}</div>
+<div class="card"><div class="mu">Monitored assets</div><div class="big">${S.assets.length}</div><div class="mu">${S.assets.filter(a=>a.ver).length} verified</div></div>
+${sevs.map(s=>`<div class="card"><div class="mu">${s}</div><div class="big" style="color:var(--${s=="Critical"?"crit":s.toLowerCase()})">${cnt(s)}</div></div>`).join("")}</div>
+<div class="grid g2 mb"><div class="card"><h3>Security trend (demo)</h3>${trend()}</div><div class="card"><h3>Recent scan activity</h3>${S.scans.slice(0,5).map(s=>`<div class="tog"><span><b>${s[0]}</b><br><span class="mu">${s[1]}</span></span><span class="mu">${s[2]}</span></div>`).join("")}<button class="btn mb" style="margin-top:10px" onclick="go('Security Scans')">Run Security Scan</button></div></div>
+<div class="card"><h3>Top issues needing attention</h3>${vtable(open().sort((a,b)=>sevs.indexOf(a.sev)-sevs.indexOf(b.sev)).slice(0,4))}</div>`,
+
+"My Assets":()=>{const l=S.assets.filter(a=>a.name.includes(afilt.toLowerCase()));return`${demo}<div class="row mb"><input placeholder="Search assets…" value="${afilt}" oninput="afilt=this.value;draw('as')" id="as"><button class="btn" onclick="modal='add';draw()">+ Add Asset</button></div>
+<div class="card tw"><table><tr><th>Asset</th><th>Type</th><th>Status</th><th>Verified</th><th>Last scan</th><th></th></tr>${l.map(a=>`<tr><td><b>${a.name}</b></td><td>${a.type}</td><td>${sb(a.status)}</td><td>${a.ver?"✔ Authorized":"✖ Pending"}</td><td>${a.scan}</td><td><button class="btn o sm" onclick="modal='asset${a.id}';draw()">Details</button></td></tr>`).join("")||"<tr><td>No assets</td></tr>"}</table></div>`},
+
+"Security Scans":()=>{const ss=scanState;return`${demo}<div class="card mb"><h3>Scan configuration</h3><div class="grid g2"><div><label>Asset</label><select id="sa">${S.assets.map(a=>`<option ${a.ver?"":"disabled"}>${a.name}${a.ver?"":" (not verified)"}</option>`).join("")}</select></div>
+<div><label>Scan type</label><select id="stp"><option>Basic Website Security Check</option><option>Configuration Check</option></select></div></div>
+<p class="mu">Scope: passive, read-only checks of the selected asset only (simulated).</p>
+<div class="demo" style="background:#fef2f2;border-color:#fecaca;color:#991b1b">You must own this asset or have explicit written authorization to test it.</div>
+<label><input type="checkbox" id="ok" style="width:auto"> I confirm I own or am authorized to scan this asset.</label><br><br>
+<button class="btn" onclick="startScan()" ${ss&&ss.p<100?"disabled":""}>Start Demo Scan</button></div>
+${ss?`<div class="card"><h3>${ss.p<100?"Scanning "+ss.a+"…":"Scan complete — "+ss.a}</h3><div class="bar"><i style="width:${ss.p}%"></i></div><p class="mu">${ss.p<100?["Resolving sample data","Checking headers","Inspecting cookies & TLS","Compiling results"][Math.min(3,Math.floor(ss.p/25))]+" · "+ss.p+"%":"Simulated results"}</p>
+${ss.p>=100?`<div class="row mb">${sevs.map(s=>bd(s,S.vulns.filter(v=>v.asset==ss.a&&v.sev==s).length+" "+s)).join("")}</div><button class="btn" onclick="filt.q='${ss.a}';go('Vulnerabilities')">Review vulnerabilities</button>`:""}</div>`:""}`},
+
+Vulnerabilities:()=>{const l=S.vulns.filter(v=>(v.t+v.asset).toLowerCase().includes(filt.q.toLowerCase())&&(!filt.sev||v.sev==filt.sev)&&(!filt.st||v.status==filt.st));
+return`${demo}<div class="row mb"><input id="vq" placeholder="Search…" value="${filt.q}" oninput="filt.q=this.value;draw('vq')"><select onchange="filt.sev=this.value;draw()"><option value="">All severities</option>${sevs.map(s=>`<option ${filt.sev==s?"selected":""}>${s}</option>`)}</select><select onchange="filt.st=this.value;draw()"><option value="">All statuses</option>${["Open","In Progress","Resolved"].map(s=>`<option ${filt.st==s?"selected":""}>${s}</option>`)}</select></div><div class="card tw">${vtable(l)}</div>`},
+
+"AI Security Assistant":()=>`${demo}<div class="card"><h3>✦ AI Security Assistant <span class="mu">(demo responses)</span></h3><div class="chat" id="chat">${chat.map(m=>`<div class="m ${m.r}">${m.t}</div>`).join("")}</div>
+<div class="row" style="margin:10px 0">${["Explain this vulnerability in simple terms","Which security issue should I fix first?","How can I fix missing security headers?","Summarize my website's security status"].map(q=>`<button class="chip" onclick="ask('${q}')">${q}</button>`).join("")}</div>
+<div class="row"><input id="ci" placeholder="Ask about your security…" onkeydown="if(event.key=='Enter')ask()"><button class="btn" onclick="ask()">Send</button></div></div>`,
+
+Reports:()=>{const o=open();return`${demo}<div class="row mb"><button class="btn" onclick="toast('Report downloaded (simulated)')">⬇ Download Report</button></div>
+<div class="grid g2 mb"><div class="card"><h3>Vulnerabilities by severity</h3>${sevs.map(s=>`<div class="tog"><span>${s}</span><b>${cnt(s)}</b></div><div class="bar"><i style="width:${cnt(s)*25}%;background:var(--${s=="Critical"?"crit":s.toLowerCase()})"></i></div>`).join("")}</div>
+<div class="card"><h3>Asset status</h3>${S.assets.map(a=>`<div class="tog"><span>${a.name}</span>${sb(a.status)}</div>`).join("")}</div></div>
+<div class="card"><h3>Report preview</h3><div style="border:1px dashed var(--bd);padding:20px;border-radius:8px"><h2 style="margin-top:0">Security Summary Report</h2><p class="mu">Prepared for Acme Retail Ltd · 14 Oct 2026 · DEMONSTRATION DATA</p><p>Overall score: <b>${score()}/100</b>. ${S.assets.length} assets monitored; ${o.length} open findings.</p><h3>Recommended actions</h3><ol>${o.sort((a,b)=>sevs.indexOf(a.sev)-sevs.indexOf(b.sev)).slice(0,4).map(v=>`<li>${bd(v.sev,v.sev)} ${v.t}: ${v.fix[0]}</li>`).join("")}</ol></div></div>`},
+
+Settings:()=>`${demo}<div class="grid g2"><div class="card"><h3>Profile</h3><label>Name</label><input value="Sara Ahmed"><br><br><label>Email</label><input value="sara@acmeretail.demo"></div>
+<div class="card"><h3>Company</h3><label>Company</label><input value="Acme Retail Ltd"><br><br><label>Industry</label><select><option>Retail</option><option>Healthcare</option></select></div>
+<div class="card"><h3>Notifications</h3>${["Critical alerts","Weekly report","Scan completed"].map(n=>`<div class="tog">${n}<input type="checkbox" checked style="width:auto"></div>`).join("")}</div>
+<div class="card"><h3>Security</h3><div class="tog">Two-factor authentication<input type="checkbox" style="width:auto"></div><button class="btn o" onclick="toast('Password reset email sent (demo)')">Change password</button><br><br><button class="btn o" onclick="localStorage.removeItem('secaas');location.reload()">Reset demo data</button></div></div><br><button class="btn" onclick="toast('Settings saved (demo)')">Save changes</button>`
+};
+function vtable(l){return`<div class="tw"><table><tr><th>Vulnerability</th><th>Severity</th><th>Asset</th><th>Detected</th><th>Status</th><th></th></tr>${l.map(v=>`<tr><td><b>${v.t}</b></td><td>${bd(v.sev,v.sev)}</td><td>${v.asset}</td><td>${v.date}</td><td>${sb(v.status)}</td><td><button class="btn o sm" onclick="sel=${v.id};modal='v';draw()">View Details</button></td></tr>`).join("")||"<tr><td>No results</td></tr>"}</table></div>`}
+function startScan(){const a=$("#sa").value;if(!$("#ok").checked)return toast("Please confirm authorization first");if(a.includes("not verified"))return toast("Asset is not verified");
+scanState={a,p:0};const t=$("#stp").value;draw();const iv=setInterval(()=>{scanState.p+=5;if(scanState.p>=100){clearInterval(iv);S.scans.unshift([a,t,"2026-10-14"]);const as=S.assets.find(x=>x.name==a);if(as)as.scan="2026-10-14";save()}if(S.page=="Security Scans")draw()},250)}
+const ANS=[[/header/,"Missing security headers — simple version:\nHeaders are instructions your site sends to browsers so they block common attacks.\n\nFix steps:\n1. Add Strict-Transport-Security\n2. Add a Content-Security-Policy\n3. Add X-Frame-Options: DENY\nMost hosts let you set these in one config file."],
+[/first|priority|fix first/,"Fix first: Exposed environment file (Critical) on shop.acmeretail.demo.\nIt may leak passwords and keys.\n\nThen: 1) Missing security headers (High)\n2) Legacy TLS 1.0 (High)\n3) The Medium and Low items."],
+[/summar|status/,`Summary (demo data):\n• Score: ${score()}/100\n• ${S.assets.length} assets, ${open().length} open findings\n• Critical ${cnt("Critical")}, High ${cnt("High")}, Medium ${cnt("Medium")}, Low ${cnt("Low")}\nBiggest concern: the exposed .env reference.`],
+[/explain|simple|vulnerab/,"In simple terms: a vulnerability is an unlocked door or window in your website. Scans look for these.\nExample: 'Weak cookie flags' means login sessions are easier to steal. Open Vulnerabilities and ask me about any item."]];
+function ask(q){const i=$("#ci");q=q||i.value.trim();if(!q)return;chat.push({r:"u",t:q});const l=q.toLowerCase();
+const a=(ANS.find(x=>x[0].test(l))||[0,"I only have a few demo answers. Try one of the suggested questions."])[1];draw();setTimeout(()=>{chat.push({r:"a",t:a});draw();const c=$("#chat");c.scrollTop=c.scrollHeight},600);const c=$("#chat");c.scrollTop=c.scrollHeight}
+function modalHTML(){if(modal=="add")return`<div class="card"><h3>Add website or domain</h3><label>Domain / URL</label><input id="nd" placeholder="example.demo"><br><br><label>Type</label><select id="nt"><option>Website</option><option>Web App</option><option>Domain</option></select><br><br><label><input type="checkbox" id="nv" style="width:auto"> I own this asset or am authorized to scan it</label><br><br><div class="row"><button class="btn" onclick="addAsset()">Add asset</button><button class="btn o" onclick="modal='';draw()">Cancel</button></div></div>`;
+if(modal.startsWith("asset")){const a=S.assets.find(x=>x.id==modal.slice(5)),vs=S.vulns.filter(v=>v.asset==a.name);return`<div class="card"><h3>${a.name}</h3><p>${sb(a.status)} ${a.ver?"✔ Verified & authorized":"✖ Verification pending"}</p><p class="mu">${a.type} · last scan ${a.scan}</p>${vs.map(v=>`<div class="tog"><span>${v.t}</span>${bd(v.sev,v.sev)}</div>`).join("")||"<p>No findings.</p>"}<br><button class="btn o" onclick="modal='';draw()">Close</button></div>`}
+if(modal=="v"){const v=S.vulns.find(x=>x.id==sel);return`<div class="card"><h3>${v.t} ${bd(v.sev,v.sev)}</h3><p class="mu">${v.asset} · ${v.date}</p><p>${v.desc}</p><b>Why it matters</b><p>${v.why}</p><b>Evidence (simulated)</b><pre style="background:#0b1b3a;color:#7dd3fc;padding:10px;border-radius:8px;white-space:pre-wrap">${v.ev}</pre><b>Business impact</b><p>${v.imp}</p><b>Remediation</b><ol>${v.fix.map(f=>`<li>${f}</li>`).join("")}</ol><label>Status</label><select onchange="setSt(${v.id},this.value)">${["Open","In Progress","Resolved"].map(s=>`<option ${v.status==s?"selected":""}>${s}</option>`)}</select><br><br><div class="row"><button class="btn" onclick="modal='';chat.push({r:'u',t:'Explain: ${v.t.replace(/'/g,"")}'},{r:'a',t:'${v.desc.replace(/'/g,"")} ${v.why.replace(/'/g,"")} Recommended: ${v.fix[0].replace(/'/g,"")}.'});go('AI Security Assistant')">Ask AI</button><button class="btn o" onclick="modal='';draw()">Close</button></div></div>`}return""}
+function setSt(id,s){S.vulns.find(v=>v.id==id).status=s;save();toast("Status updated");draw()}
+function addAsset(){const n=$("#nd").value.trim().toLowerCase();if(!n)return toast("Enter a domain");S.assets.push({id:Date.now(),name:n,type:$("#nt").value,ver:$("#nv").checked,scan:"Never",status:"Needs Attention"});S.notifs.unshift("New asset added: "+n);save();modal="";toast("Asset added");draw()}
+function login(){authed=true;draw()}
+function draw(keep){if(!authed){$("#root").innerHTML=`<div class="login"><div class="hero"><div class="logo" style="font-size:26px">🛡 Shield<b>Ops</b></div><h1 style="margin:0">Cybersecurity for businesses without a security team.</h1><p>Monitor your websites, understand risks in plain English and get AI-guided fixes.</p><svg viewBox="0 0 300 120" width="300"><path d="M150 8 220 34v34c0 24-30 42-70 52-40-10-70-28-70-52V34z" fill="none" stroke="#06b6d4" stroke-width="3"/><path d="m120 64 22 20 40-42" fill="none" stroke="#fff" stroke-width="6"/></svg></div>
+<div class="form"><h2>Sign in</h2><input id="em" value="sara@acmeretail.demo"><input id="pw" type="password" value="demo1234"><button class="btn" onclick="login()">Sign in</button><button class="btn o" onclick="login()">Create account</button><p class="mu">Prototype: authentication is simulated.</p></div></div>`;return}
+const nf=S.nf;$("#root").innerHTML=`<div class="app"><aside class="side ${S.side?"open":""}"><div class="logo">🛡 Shield<b>Ops</b></div>${W.map(p=>`<button class="nav ${S.page==p?"on":""}" onclick="go('${p}')"><span>${IC[p]}</span>${p}</button>`).join("")}<button class="nav" onclick="authed=false;draw()" style="margin-top:20px">⏻ Sign out</button></aside>
+<div class="main"><div class="top"><button class="btn o sm burger" onclick="S.side=!S.side;draw()">☰</button><h2>${S.page==="Overview"?"Welcome back, Sara 👋":S.page}</h2><button class="btn o sm bell" onclick="S.nf=!S.nf;draw()">🔔<span class="dot">${S.notifs.length}</span></button><b style="background:var(--pr);color:#fff;border-radius:50%;width:34px;height:34px;display:grid;place-items:center">SA</b></div>
+${nf?`<div class="card pop"><h3>Notifications</h3>${S.notifs.map(n=>`<div class="tog" style="border-bottom:1px solid var(--bd)">${n}</div>`).join("")}<button class="btn o sm" style="margin-top:8px" onclick="S.notifs=[];S.nf=0;draw()">Clear all</button></div>`:""}
+<div class="content">${P[S.page]()}</div></div>${modal?`<div class="modal" onclick="if(event.target==this){modal='';draw()}">${modalHTML()}</div>`:""}</div>`;
+if(keep){const e=$("#"+keep);if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}}S.side=S.side;if(S.page=="AI Security Assistant"){const c=$("#chat");if(c)c.scrollTop=c.scrollHeight}}
+draw();
+</script></body></html>
